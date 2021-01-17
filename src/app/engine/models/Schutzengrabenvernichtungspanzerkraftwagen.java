@@ -3,12 +3,12 @@ package app.engine.models;
 import app.engine.tools.Orientation;
 import app.engine.tools.Vector;
 
-public class Schützengrabenvernichtungspanzerkraftwagen extends AbstractMapObject {
+public class Schutzengrabenvernichtungspanzerkraftwagen extends AbstractMapObject {
 
-    public Schützengrabenvernichtungspanzerkraftwagen() {
+    public Schutzengrabenvernichtungspanzerkraftwagen() {
         this(new Vector(0, 0)); }
 
-    public Schützengrabenvernichtungspanzerkraftwagen(Vector position) {
+    public Schutzengrabenvernichtungspanzerkraftwagen(Vector position) {
         super.position = position;
     }
 

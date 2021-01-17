@@ -5,7 +5,7 @@ import app.engine.interfaces.IObserverPositionChanged;
 import app.engine.models.AbstractMapObject;
 import app.engine.models.Bullet;
 import app.engine.models.Particle;
-import app.engine.models.Schützengrabenvernichtungspanzerkraftwagen;
+import app.engine.models.Schutzengrabenvernichtungspanzerkraftwagen;
 import app.engine.tools.Vector;
 
 import java.util.*;
@@ -17,18 +17,18 @@ public class WorldMap implements IObserverPositionChanged, IObserverKilled {
     private final Map<Vector, AbstractMapObject> instances = new HashMap<>();
     private final Map<Vector, Particle> particleMap = new HashMap<>();
     private final List<Bullet> bulletHell = new ArrayList<>();
-    private final List<Schützengrabenvernichtungspanzerkraftwagen> enemyTanks = new ArrayList<>();
-    private final Schützengrabenvernichtungspanzerkraftwagen playerTank;
+    private final List<Schutzengrabenvernichtungspanzerkraftwagen> enemyTanks = new ArrayList<>();
+    private final Schutzengrabenvernichtungspanzerkraftwagen playerTank;
 
     public WorldMap(int playerHP) {
-        this.playerTank = new Schützengrabenvernichtungspanzerkraftwagen();
+        this.playerTank = new Schutzengrabenvernichtungspanzerkraftwagen();
         this.playerTank.addPositionObserver(this);
         this.playerTank.setHP(playerHP);
     }
 
-    public Schützengrabenvernichtungspanzerkraftwagen getPlayerTank() { return this.playerTank; }
+    public Schutzengrabenvernichtungspanzerkraftwagen getPlayerTank() { return this.playerTank; }
 
-    public List<Schützengrabenvernichtungspanzerkraftwagen> getEnemyTanks() {return Collections.unmodifiableList(this.enemyTanks); }
+    public List<Schutzengrabenvernichtungspanzerkraftwagen> getEnemyTanks() {return Collections.unmodifiableList(this.enemyTanks); }
 
     public List<Bullet> getBulletHell() { return Collections.unmodifiableList(this.bulletHell); }
 
@@ -44,8 +44,8 @@ public class WorldMap implements IObserverPositionChanged, IObserverKilled {
         o.addKiller(this);
         if (o.getClass() == Bullet.class) {
             this.bulletHell.add((Bullet) o);
-        } else if (o.getClass() == Schützengrabenvernichtungspanzerkraftwagen.class) {
-            this.enemyTanks.add((Schützengrabenvernichtungspanzerkraftwagen) o);
+        } else if (o.getClass() == Schutzengrabenvernichtungspanzerkraftwagen.class) {
+            this.enemyTanks.add((Schutzengrabenvernichtungspanzerkraftwagen) o);
         }
     }
 
@@ -66,7 +66,7 @@ public class WorldMap implements IObserverPositionChanged, IObserverKilled {
             this.particleMap.remove(caller.getPosition());
         } else {
             this.instances.remove(caller.getPosition());
-            if (caller.getClass() == Schützengrabenvernichtungspanzerkraftwagen.class) {
+            if (caller.getClass() == Schutzengrabenvernichtungspanzerkraftwagen.class) {
                 this.enemyTanks.remove(caller);
             } else if (caller.getClass() == Bullet.class) {
                 this.bulletHell.remove(caller);

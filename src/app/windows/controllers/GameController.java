@@ -112,7 +112,7 @@ public class GameController implements Initializable {
                 Vector currentPos = bottomLeft.add(new Vector(x, y));
                 AbstractMapObject amo = this.sim.objectAt(currentPos);
                 if (amo != null) {
-                    if (amo.getClass() == Schützengrabenvernichtungspanzerkraftwagen.class) {
+                    if (amo.getClass() == Schutzengrabenvernichtungspanzerkraftwagen.class) {
                         this.drawObject(gc, this.enemyTank, new Vector(x, y), amo.getOrient());
                     } else if (amo.getClass() == Bullet.class) {
                         this.drawObject(gc, this.bullet, new Vector(x, y), amo.getOrient());

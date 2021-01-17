@@ -58,13 +58,13 @@ public class World implements IObserverKilled {
         }
         this.dropGarbage();
 
-        for(Schützengrabenvernichtungspanzerkraftwagen enemy : this.map.getEnemyTanks()) {
-            this.takeAIAction(enemy);
+        for (Bullet o : this.map.getBulletHell()) {
+            this.moveBullet(o);
         }
         this.dropGarbage();
 
-        for (Bullet o : this.map.getBulletHell()) {
-            this.moveBullet(o);
+        for(Schutzengrabenvernichtungspanzerkraftwagen enemy : this.map.getEnemyTanks()) {
+            this.takeAIAction(enemy);
         }
         this.dropGarbage();
 
@@ -80,14 +80,14 @@ public class World implements IObserverKilled {
             if (tankPos == null) {
                 return;
             }
-            this.spawnObject(new Schützengrabenvernichtungspanzerkraftwagen(tankPos));
+            this.spawnObject(new Schutzengrabenvernichtungspanzerkraftwagen(tankPos));
             this.lastEnemy = this.day;
         } else if (this.worldGenerator.nextInt(this.maxEnemyInterval) == 0) {
             Vector tankPos = this.getRandomPos();
             if (tankPos == null) {
                 return;
             }
-            this.spawnObject(new Schützengrabenvernichtungspanzerkraftwagen(tankPos));
+            this.spawnObject(new Schutzengrabenvernichtungspanzerkraftwagen(tankPos));
             this.lastEnemy = this.day;
         }
     }
@@ -110,7 +110,7 @@ public class World implements IObserverKilled {
         }
     }
 
-    void takeAIAction(Schützengrabenvernichtungspanzerkraftwagen enemy) {
+    void takeAIAction(Schutzengrabenvernichtungspanzerkraftwagen enemy) {
         Orientation closestOrient = Orientation.getFromDegrees(Math.toDegrees(3 * Math.PI/2.0 + Math.atan2(
                 enemy.getPosition().y - this.getPlayerPos().y,
                 enemy.getPosition().x - this.getPlayerPos().x
@@ -193,7 +193,7 @@ public class World implements IObserverKilled {
         this.shoot(this.map.getPlayerTank());
     }
 
-    public void shoot(Schützengrabenvernichtungspanzerkraftwagen tank) {
+    public void shoot(Schutzengrabenvernichtungspanzerkraftwagen tank) {
         Vector bulletPos = tank.getPosition().add(tank.getOrient().getUnitVector());
         AbstractMapObject targetObject = this.map.objectAt(bulletPos);
         if (targetObject == null) {
@@ -227,7 +227,7 @@ public class World implements IObserverKilled {
     private void dropGarbage() {
         for(AbstractMapObject o : this.garbage) {
             o.kill();
-            if (o.getClass() == Schützengrabenvernichtungspanzerkraftwagen.class) {
+            if (o.getClass() == Schutzengrabenvernichtungspanzerkraftwagen.class) {
                 this.currentScore += this.scorePerEnemy;
             }
         }
