@@ -12,6 +12,7 @@ public abstract class AbstractMapObject {
     private final List<IObserverPositionChanged> observersPositionChanged = new ArrayList<>();
     private final List<IObserverKilled> observersKilled = new ArrayList<>();
     protected int HP;
+    private boolean killed = true;
 
     Vector position = new Vector(0, 0);
     Orientation orient = Orientation.NORTH;
@@ -35,8 +36,11 @@ public abstract class AbstractMapObject {
     }
 
     public void kill() {
+        this.killed = true;
         for(IObserverKilled o : this.observersKilled) {
             o.killed(this);
         }
     }
+
+    public boolean isDead() { return this.killed; }
 }

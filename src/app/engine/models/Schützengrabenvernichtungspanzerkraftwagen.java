@@ -4,7 +4,6 @@ import app.engine.tools.Orientation;
 import app.engine.tools.Vector;
 
 public class Schützengrabenvernichtungspanzerkraftwagen extends AbstractMapObject {
-    private boolean alive = true;
 
     public Schützengrabenvernichtungspanzerkraftwagen() {
         this(new Vector(0, 0)); }

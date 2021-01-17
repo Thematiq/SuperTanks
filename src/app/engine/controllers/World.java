@@ -18,25 +18,32 @@ public class World implements IObserverKilled {
     private final int maxAbsolute;
     private final int minAbsolute;
 
+    private final int scorePerEnemy = 100;
+    private int currentScore = 0;
+
     private final int maxEnemyInterval;
     private int lastEnemy = 0;
 
     private final int maxRockInterval;
     private int lastRock = 0;
 
-    private final int maxHP = 3;
-    private final WorldMap map = new WorldMap(maxHP);
+    private final int maxHP;
+    private final WorldMap map;
 
+    private List<AbstractMapObject> garbage = new ArrayList<>();
     private int day = 0;
-    public World() { this(8, 10); }
 
-    public World(int maxRock, int maxEnemy) { this(maxRock, maxEnemy, 12, 5); }
+    public World(int maxRock, int maxEnemy, int maxLives) {
+        this(maxRock, maxEnemy, 12, 5, maxLives);
+    }
 
-    public World(int maxRock, int maxEnemy, int maxAbs, int minAbs) {
+    public World(int maxRock, int maxEnemy, int maxAbs, int minAbs, int maxLives) {
+        this.maxHP = maxLives;
         this.maxRockInterval = maxRock;
         this.maxEnemyInterval = maxEnemy;
         this.maxAbsolute = maxAbs;
         this.minAbsolute = minAbs;
+        this.map = new WorldMap(maxHP);
     }
 
     public Vector getPlayerPos() { return this.map.getPlayerTank().getPosition(); }
@@ -44,29 +51,22 @@ public class World implements IObserverKilled {
     public Orientation getPlayerOrient() { return this.map.getPlayerTank().getOrient(); }
 
     void takeAction() {
-        List<IObserverDayChanged> killed = new ArrayList<>();
         for (IObserverDayChanged o : this.obs) {
             if (o.newDay(this.day)) {
-                killed.add(o);
+                this.garbage.add((AbstractMapObject) o);
             }
         }
-        for (IObserverDayChanged o : killed) {
-            o.kill();
-        }
+        this.dropGarbage();
 
         for(Schützengrabenvernichtungspanzerkraftwagen enemy : this.map.getEnemyTanks()) {
             this.takeAIAction(enemy);
         }
+        this.dropGarbage();
 
-        List<Bullet> killedBullets = new ArrayList<>();
         for (Bullet o : this.map.getBulletHell()) {
-            if (this.moveBullet(o)) {
-                killedBullets.add(o);
-            }
+            this.moveBullet(o);
         }
-        for (Bullet o : killedBullets) {
-            o.kill();
-        }
+        this.dropGarbage();
 
         this.rockSpawner();
         this.enemySpawner();
@@ -77,10 +77,16 @@ public class World implements IObserverKilled {
     void enemySpawner() {
         if (this.day - this.lastEnemy > this.maxEnemyInterval) {
             Vector tankPos = this.getRandomPos();
+            if (tankPos == null) {
+                return;
+            }
             this.spawnObject(new Schützengrabenvernichtungspanzerkraftwagen(tankPos));
             this.lastEnemy = this.day;
         } else if (this.worldGenerator.nextInt(this.maxEnemyInterval) == 0) {
             Vector tankPos = this.getRandomPos();
+            if (tankPos == null) {
+                return;
+            }
             this.spawnObject(new Schützengrabenvernichtungspanzerkraftwagen(tankPos));
             this.lastEnemy = this.day;
         }
@@ -89,10 +95,16 @@ public class World implements IObserverKilled {
     void rockSpawner() {
         if (this.day - this.lastRock > this.maxRockInterval) {
             Vector rockPos = this.getRandomPos();
+            if (rockPos == null) {
+                return;
+            }
             this.spawnObject(new Rock(rockPos));
             this.lastRock = this.day;
         } else if (this.worldGenerator.nextInt(this.maxRockInterval) == 0) {
             Vector rockPos = this.getRandomPos();
+            if (rockPos == null) {
+                return;
+            }
             this.spawnObject(new Rock(rockPos));
             this.lastRock = this.day;
         }
@@ -117,12 +129,17 @@ public class World implements IObserverKilled {
     Vector getRandomPos() {
         Vector playerPos = this.getPlayerPos();
         Vector tankPos;
+        int totalTrials = 0;
         do {
             tankPos = new Vector(
                     this.worldGenerator.nextInt(2 * this.maxAbsolute) + (playerPos.x - this.maxAbsolute),
                     this.worldGenerator.nextInt(2 * this.maxAbsolute) + (playerPos.y - this.maxAbsolute)
             );
-        } while(playerPos.getMaxDist(tankPos) > this.minAbsolute && playerPos.getMaxDist(tankPos) < this.maxAbsolute && this.isEmptyTile(tankPos));
+            totalTrials++;
+            if (totalTrials > 100) {
+                return null;
+            }
+        } while((playerPos.getMaxDist(tankPos) > this.minAbsolute && playerPos.getMaxDist(tankPos) < this.maxAbsolute && this.isEmptyTile(tankPos)));
         return tankPos;
     }
 
@@ -130,15 +147,14 @@ public class World implements IObserverKilled {
 //
 //    }
 
-    boolean moveBullet(Bullet o) {
+    void moveBullet(Bullet o) {
         Vector newPos = o.getPosition().add(o.getOrient().getUnitVector());
         if (this.isEmptyTile(newPos)) {
             o.move(newPos);
-            return false;
         } else {
             this.createExplosion(newPos);
-            this.objectAt(newPos).kill();
-            return true;
+            this.garbage.add(o);
+            this.garbage.add(this.objectAt(newPos));
         }
     }
 
@@ -185,9 +201,7 @@ public class World implements IObserverKilled {
             this.map.addObject(boom);
             this.createFire(tank.getPosition(), tank.getOrient());
         } else {
-            tank.kill();
-            targetObject.kill();
-            this.createExplosion(tank.getPosition());
+            this.garbage.add(targetObject);
             this.createExplosion(bulletPos);
         }
 
@@ -210,11 +224,27 @@ public class World implements IObserverKilled {
 
     public void rotatePlayer(Orientation translation) { this.map.getPlayerTank().rotate(translation); }
 
-//    public boolean isPlayerAlive() { return this.map.isPlayerAlive(); }
+    private void dropGarbage() {
+        for(AbstractMapObject o : this.garbage) {
+            o.kill();
+            if (o.getClass() == Schützengrabenvernichtungspanzerkraftwagen.class) {
+                this.currentScore += this.scorePerEnemy;
+            }
+        }
+        this.garbage = new ArrayList<>();
+    }
 
     @Override
     public void killed(AbstractMapObject caller) {
         Particle p = (Particle) caller;
         this.obs.remove(p);
+    }
+
+    public int getScore() {
+        if (this.getPlayerHP() > 0) {
+            return this.currentScore;
+        } else {
+            return this.currentScore - this.scorePerEnemy;
+        }
     }
 }

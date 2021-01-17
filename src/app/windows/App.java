@@ -12,15 +12,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/game.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/gameOptions.fxml"));
         Parent root = loader.load();
-        GameController gc = loader.getController();
         Scene scene = new Scene(root);
         stage.setTitle("Super hot tanks");
         stage.getIcons().add(new Image(getClass().getResource("resources/icon.png").toURI().toString()));
         stage.setScene(scene);
         stage.show();
-        scene.setOnKeyPressed(gc::inputHandler);
     }
 
     public static void run(String[] args) {

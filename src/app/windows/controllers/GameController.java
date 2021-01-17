@@ -8,13 +8,19 @@ import app.engine.tools.Vector;
 
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -43,10 +49,11 @@ public class GameController implements Initializable {
     };
 
     private final int cellSize = 64;
-    private final World sim = new World();
+    private World sim;
 
     private int viewWidth;
     private int viewHeight;
+    private boolean endGame = false;
 
     @FXML
     private Canvas gameCanvas;
@@ -54,15 +61,31 @@ public class GameController implements Initializable {
     private GridPane mainGrid;
 
     public void inputHandler(KeyEvent event) {
-        switch(event.getCode()) {
-            case LEFT  -> this.sim.rotatePlayer(Orientation.getOrient(7));
-            case RIGHT -> this.sim.rotatePlayer(Orientation.getOrient(1));
-            case DOWN  -> this.sim.movePlayerBackward();
-            case UP    -> this.sim.movePlayerForward();
-            case SPACE -> this.sim.shoot();
-            default -> System.out.println("Unrecognized command");
+        if (!this.endGame) {
+            switch (event.getCode()) {
+                case LEFT -> this.sim.rotatePlayer(Orientation.getOrient(7));
+                case RIGHT -> this.sim.rotatePlayer(Orientation.getOrient(1));
+                case DOWN -> this.sim.movePlayerBackward();
+                case UP -> this.sim.movePlayerForward();
+                case SPACE -> this.sim.shoot();
+                default -> System.out.println("Unrecognized command");
+            }
+            this.draw();
+            if (this.sim.getPlayerHP() <= 0) {
+                this.endGame();
+            }
+        } else {
+            Stage stage = (Stage) this.gameCanvas.getScene().getWindow();
+            stage.close();
         }
-        this.draw();
+    }
+
+    void endGame() {
+        this.endGame = true;
+        GraphicsContext gc = this.gameCanvas.getGraphicsContext2D();
+        gc.setFont(new Font(72));
+        gc.fillText("Game Over", this.gameCanvas.getWidth() / 2 - 200, this.gameCanvas.getHeight() / 2);
+        gc.fillText("Total Score: " + this.sim.getScore(), this.gameCanvas.getWidth() / 2 - 200, this.gameCanvas.getHeight() / 2 + 75);
     }
 
     private void listenCanvasResize(ObservableValue<? extends Number> observableValue, Number number, Number number1) {
@@ -138,6 +161,8 @@ public class GameController implements Initializable {
             gc.drawImage(this.emptyHP, x, y, this.cellSize, this.cellSize);
             x += inc_x;
         }
+        gc.setFont(new Font(48));
+        gc.fillText("Current score: " + this.sim.getScore(), 10, 120);
     }
 
     private void drawObject(GraphicsContext gc, Image img, Vector pos, Orientation orient) {
@@ -156,8 +181,10 @@ public class GameController implements Initializable {
         this.gameCanvas.setHeight(this.mainGrid.getHeight());
         this.mainGrid.widthProperty().addListener(this::listenCanvasResize);
         this.mainGrid.heightProperty().addListener(this::listenCanvasResize);
-        this.sim.spawnObject(new Rock(new Vector(-2, -2)));
+    }
 
+    public void spawnWorld(int tanks, int rocks, int lives) {
+        this.sim = new World(rocks, tanks, lives);
         this.prepareUtils();
         this.draw();
     }
