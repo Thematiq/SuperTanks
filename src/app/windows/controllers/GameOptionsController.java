@@ -16,7 +16,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-
+/**
+ * Game parameters window controller
+ * @author Mateusz Praski
+ */
 public class GameOptionsController implements Initializable {
     @FXML
     private TextField hpText;

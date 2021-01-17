@@ -3,6 +3,10 @@ package app.engine.models;
 import app.engine.tools.Orientation;
 import app.engine.tools.Vector;
 
+/**
+ * Class representing tank
+ * @author Mateusz Praski
+ */
 public class Schutzengrabenvernichtungspanzerkraftwagen extends AbstractMapObject {
 
     public Schutzengrabenvernichtungspanzerkraftwagen() {

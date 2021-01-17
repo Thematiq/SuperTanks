@@ -3,6 +3,10 @@ package app.engine.models;
 import app.engine.tools.Orientation;
 import app.engine.tools.Vector;
 
+/**
+ * Class representing a bullet
+ * @author Mateusz Praski
+ */
 public class Bullet extends AbstractMapObject {
     public Bullet(Vector pos, Orientation orientation) {
         super.position = pos;

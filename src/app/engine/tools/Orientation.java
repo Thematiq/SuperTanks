@@ -107,6 +107,11 @@ public enum Orientation {
         return getOrient(x.getInt() + y);
     }
 
+    /**
+     * Translates angle to closest orientation
+     * @param degrees angle in degrees
+     * @return closest orientation
+     */
     public static Orientation getFromDegrees(double degrees) {
         degrees %= 360;
         if (degrees > 337.5 || degrees < 22.5) {

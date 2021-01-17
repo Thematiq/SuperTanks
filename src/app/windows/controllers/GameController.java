@@ -8,10 +8,7 @@ import app.engine.tools.Vector;
 
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -20,11 +17,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Game controller
+ * @author Mateusz Praski
+ */
 public class GameController implements Initializable {
     // UI
     private final Image fullHP = new Image(getClass().getResource("../resources/full_heart.png").toString());
@@ -60,6 +59,10 @@ public class GameController implements Initializable {
     @FXML
     private GridPane mainGrid;
 
+    /**
+     * User input handler
+     * @param event keyboard event
+     */
     public void inputHandler(KeyEvent event) {
         if (!this.endGame) {
             switch (event.getCode()) {
@@ -80,6 +83,9 @@ public class GameController implements Initializable {
         }
     }
 
+    /**
+     * Game ending handler
+     */
     void endGame() {
         this.endGame = true;
         GraphicsContext gc = this.gameCanvas.getGraphicsContext2D();
@@ -88,6 +94,7 @@ public class GameController implements Initializable {
         gc.fillText("Total Score: " + this.sim.getScore(), this.gameCanvas.getWidth() / 2 - 200, this.gameCanvas.getHeight() / 2 + 75);
     }
 
+
     private void listenCanvasResize(ObservableValue<? extends Number> observableValue, Number number, Number number1) {
         this.gameCanvas.setWidth(this.mainGrid.getWidth());
         this.gameCanvas.setHeight(this.mainGrid.getHeight());
@@ -95,11 +102,17 @@ public class GameController implements Initializable {
         this.draw();
     }
 
+    /**
+     * Changes map view size based on a canvas size
+     */
     private void prepareUtils() {
         this.viewHeight = (int) this.gameCanvas.getHeight() / this.cellSize;
         this.viewWidth  = (int) this.gameCanvas.getWidth() / this.cellSize;
     }
 
+    /**
+     * Main drawer
+     */
     private void draw() {
         GraphicsContext gc = this.gameCanvas.getGraphicsContext2D();
         Vector playerPos = this.sim.getPlayerPos();

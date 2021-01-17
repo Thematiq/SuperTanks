@@ -5,7 +5,10 @@ import app.engine.interfaces.ParticleType;
 import app.engine.tools.Orientation;
 import app.engine.tools.Vector;
 
-
+/**
+ * Class representing particle animation on a map
+ * @author Mateusz Praski
+ */
 public class Particle extends AbstractMapObject implements IObserverDayChanged {
     public final ParticleType type;
 

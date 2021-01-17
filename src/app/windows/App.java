@@ -1,6 +1,5 @@
 package app.windows;
 
-import app.windows.controllers.GameController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,6 +7,10 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+/**
+ * Javafx main class
+ * @author Mateusz Praski
+ */
 public class App extends Application {
 
     @Override

@@ -10,6 +10,10 @@ import app.engine.tools.Vector;
 
 import java.util.*;
 
+/**
+ * Class describing world map
+ * @author Mateusz Praski
+ */
 public class WorldMap implements IObserverPositionChanged, IObserverKilled {
     // Fun fact
     // You can't import class named Tank

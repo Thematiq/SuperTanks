@@ -29,13 +29,9 @@ sourceSets {
     }
 }
 
-dependencies {
-    compile 'com.googlecode.json-simple:json-simple:1.1.1'
-}
-
 jar {
     manifest {
-        attributes "Main-Class" : "app.Build"
+        attributes "Main-Class" : "app.windows.Main"
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }

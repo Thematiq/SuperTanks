@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
+/**
+ * Main simulation controller
+ * @author Mateusz Praski
+ */
 public class World implements IObserverKilled {
     private final Random worldGenerator = new Random();
     private final List<IObserverDayChanged> obs = new ArrayList<>();
@@ -142,10 +145,6 @@ public class World implements IObserverKilled {
         } while((playerPos.getMaxDist(tankPos) > this.minAbsolute && playerPos.getMaxDist(tankPos) < this.maxAbsolute && this.isEmptyTile(tankPos)));
         return tankPos;
     }
-
-//    void spawnEnemy() {
-//
-//    }
 
     void moveBullet(Bullet o) {
         Vector newPos = o.getPosition().add(o.getOrient().getUnitVector());

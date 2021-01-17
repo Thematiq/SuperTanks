@@ -8,6 +8,10 @@ import app.engine.tools.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class for map objects
+ * @author Mateusz Praski
+ */
 public abstract class AbstractMapObject {
     private final List<IObserverPositionChanged> observersPositionChanged = new ArrayList<>();
     private final List<IObserverKilled> observersKilled = new ArrayList<>();

@@ -1,5 +1,9 @@
 package app.engine.interfaces;
 
+/**
+ * Enum for particle type
+ * @author Mateusz Praski
+ */
 public enum ParticleType {
     EXPLOSION,
     FIRE;
